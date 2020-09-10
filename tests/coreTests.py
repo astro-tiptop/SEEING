@@ -81,8 +81,5 @@ class TestEvaluateFormula(unittest.TestCase):
         self.assertTrue(np.allclose(result2[2], 13.0*np.ones((20,10))))
 
         
-        
-        
-        
 if __name__ == '__main__':
     unittest.main()

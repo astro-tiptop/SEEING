@@ -6,13 +6,18 @@ from SEEING.lambdifyDictionaries import *
 
 def getSymbolByName(expr, sname):
     free_syms = {symbol.name: symbol for symbol in expr.free_symbols}
-    return free_syms[sname]
-
+    if sname in free_syms.keys():
+        return free_syms[sname]
+    else:
+        return None
+    
 
 def subsParamsByName(expr1, subsDict):
     expr = expr1
     for sname, sval in subsDict.items():
-        expr = expr.subs(getSymbolByName(expr, sname), sval)
+        ss = getSymbolByName(expr, sname)
+        if ss:
+            expr = expr.subs(ss, sval)
     return expr
 
 
@@ -58,6 +63,23 @@ def evaluateFormula(
     p_f = getRestrictedLambdaBasic(expr, subsDict, independentVarNames, modules)
     return evaluateLambda(p_f, independentVarNames, samples)
 
+
+from sympy.parsing import latex
+
+def latexToSympy(latexText):
+    return latex.parse_latex(latexText)
+
+
+def sympyToLatex(expr):
+    return sp.latex(expr, mode='plain')
+    
+
+def sympyToString(expr):
+    return sp.srepr(expr)
+    
+    
+    
+    
 # Currently not used
 #def replaceParamsByName(expr, subsDict):    
 #    syms_and_funs = set(expr.free_symbols) | set([i.func for i in expr.atoms(sp.Function) if isinstance(i, sp.function.AppliedUndef)])

@@ -15,7 +15,6 @@ class Formulary(object):
 
     def displayAll(self):
         for name, f in self.formulas.items():
-            #            print(name)
             display(f[2])
 
     def getFormula(self, name):

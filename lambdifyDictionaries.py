@@ -55,3 +55,8 @@ gpulib = {
 
 for key, value in cp.__dict__.items():
     gpulib[key] = value
+
+backendLibs = {
+    cp: gpulib,
+    np: cpulib
+}
