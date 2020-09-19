@@ -32,10 +32,10 @@ class Integrator(object):
         elif spacing == 'sqrt':
             return self.xp.asarray(h*np.sqrt(np.linspace(l/h, h/h, npoints), dtype=self.evalType))
         elif spacing == 'random':
-#            return l + self.xp.random.random(npoints, dtype=self.evalType)*(h-l)
             return l + self.xp.random.random(npoints)*(h-l)
         else:
             return self.xp.asarray(np.linspace(l, h, npoints), dtype=self.evalType)
+
 
     def outputData(self, _data):
         if self.xp == cp:
@@ -61,7 +61,12 @@ class Integrator(object):
         else:
             evalFunctionV = np.vectorize(evalFunction)
             def evaluableFunction(*paramsSamplingGrids):
-                return evaluFunctionV(*paramsSamplingGrids)            
+                return evaluFunctionV(*paramsSamplingGrids)
+        
+#        print(inspect.getmembers(evalFunction))
+#        print(inspect.getsource(evalFunction))
+#        print(inspect.getsource( inspect.unwrap(evaluableFunction)) )
+        
         return evaluableFunction(*paramsSamplingGrids)
 
 
@@ -78,15 +83,13 @@ class Integrator(object):
                 parameterSamplings.append(self.getSampling(float(parameterLow), float(parameterHigh), parameterPoints, parameterSpacing))
             else:
                 parameterSamplings.append(self.xp.asarray(parameterLow, dtype=self.evalType))
-                        
-
-#            parameterSamplings.append(self.getSampling(float(parameterLow), float(parameterHigh), parameterPoints, parameterSpacing))
         return self.outputData(parameterSamplings), self.outputData(self.parametricEvaluation(parameterSamplings, lambdaIntegrand))
 
     
     def parametricIntegralEvaluation(self, integrationVarsSamplings, paramsSamplings, integrandFunction, method='rect', smallSamplings=[]):
         integrationAndParamsVarSamplingGrids = self.xp.meshgrid( *[*integrationVarsSamplings, *paramsSamplings], sparse=True, copy=False)
         weightsArrays = [self.getWeightsArray(aa.shape[0]) for aa in integrationVarsSamplings]
+        # for Trapezoidal method only:
         weightsGrid = reduce(np.multiply.outer, weightsArrays[::-1])
         weightsGrid = self.xp.asarray( np.dstack([weightsGrid] * paramsSamplings[0].shape[0]) )
 
@@ -99,11 +102,30 @@ class Integrator(object):
         if nVars>1:
             tt=tuple(range(nVars))
 
+        # for Rectangles method
         def genericSum(xx):
             return self.xp.sum( xx, axis=tt )
             
+        # for Trapezoidal method
         def genericReduction(xx):
             return self.postMap( self.xp.sum( xx * weightsGrid, axis=tt ) )
+
+        N = 1
+        for ssx in integrationVarsSamplings:
+            N *= ssx.shape[0]
+        M = paramsSamplings[0].shape[0]
+
+        def mcReduction(y_comp):
+            # integrationAndParamsVarSamplingGridsSmall = self.xp.meshgrid( *[*smallSamplings, *paramsSamplings], sparse=True, copy=False)
+            # # evalf0 = integratedFunction(*integrationAndParamsVarSamplingGridsSmall)
+            tt = (0,1)
+            y_rand = self.xp.random.random( (integrationVarsSamplings[0].shape[0], integrationVarsSamplings[1].shape[0], M))
+            f_range_real = self.xp.max(self.xp.real(y_comp), axis=tt)-self.xp.min(self.xp.real(y_comp), axis=tt)
+            f_range_imag = self.xp.max(self.xp.imag(y_comp), axis=tt)-self.xp.min(self.xp.imag(y_comp), axis=tt)
+            freqs_real = (self.xp.sum(self.xp.where(  y_rand*f_range_real < self.xp.real(y_comp) - self.xp.min(self.xp.real(y_comp), axis=tt), 1, 0 ), axis=tt) * f_range_real/float(N) + self.xp.min(self.xp.real(y_comp), axis=tt)) 
+            freqs_imag = (self.xp.sum(self.xp.where(  y_rand*f_range_imag < self.xp.imag(y_comp) - self.xp.min(self.xp.imag(y_comp), axis=tt), 1, 0 ), axis=tt) * f_range_imag/float(N) + self.xp.min(self.xp.imag(y_comp), axis=tt))
+            return freqs_real + 1j * freqs_imag
+
         
         if self.xp == cp:
             if method=='rect':
@@ -116,14 +138,17 @@ class Integrator(object):
                     return integrandFunction(*integrationAndParamsVarSamplingGrids)
             else:
                 @cp.fuse(kernel_name='integratedFunctionMC')
-                def integratedFunction(*integrationAndParamsVarSamplingGrids):                               
+                def integratedFunction(*integrationAndParamsVarSamplingGrids):
                     return integrandFunction(*integrationAndParamsVarSamplingGrids)
+#                @cp.fuse(kernel_name='integratedFunctionMC')
+#                def integratedFunction(*integrationAndParamsVarSamplingGrids, reduce=mcReduction, post_map=self.postMap):
+#                    return integrandFunction(*integrationAndParamsVarSamplingGrids)
                 
         else:
             integrandFunctionV = np.vectorize(integrandFunction)
             if method=='rect':
                 def integratedFunction(*integrationAndParamsVarSamplingGrids, post_map=self.postMap):
-    #                return post_map(genericSum(np.nan_to_num(integrandFunction(*integrationAndParamsVarSamplingGrids))))
+#                   return post_map(genericSum(np.nan_to_num(integrandFunction(*integrationAndParamsVarSamplingGrids))))
                     return post_map(genericSum(integrandFunctionV(*integrationAndParamsVarSamplingGrids)))
             else:
                 def integratedFunction(*integrationAndParamsVarSamplingGrids):
@@ -137,39 +162,16 @@ class Integrator(object):
             return scaleFactor * genericReduction(integratedFunction(*integrationAndParamsVarSamplingGrids))
         elif method=='rect':
             return scaleFactor * integratedFunction(*integrationAndParamsVarSamplingGrids)
-        elif method=='mc':
+        elif method=='mc':        
             scaleFactor = 1.0
             tt = (0,1)
             for ii in range(nVars):
                 if (len(smallSamplings[ii])>1):
                     scaleFactor *= (smallSamplings[ii][-1] - smallSamplings[ii][0])
-            y_comp = integratedFunction(*integrationAndParamsVarSamplingGrids)
-            integrationAndParamsVarSamplingGridsSmall = self.xp.meshgrid( *[*smallSamplings, *paramsSamplings], sparse=True, copy=False)
-            # evalf0 = integratedFunction(*integrationAndParamsVarSamplingGridsSmall)
-            evalf0_real = self.xp.real(y_comp)
-            evalf0_imag = self.xp.imag(y_comp)
-            f_max = self.xp.amax(  self.xp.absolute(y_comp), axis=tt)
-            f_min = self.xp.amin(  self.xp.absolute(y_comp), axis=tt)
-            f_max_real = self.xp.amax(evalf0_real, axis=tt)
-            f_max_imag = self.xp.amax(evalf0_imag, axis=tt)
-            f_min_real = self.xp.amin(evalf0_real, axis=tt)
-            f_min_imag = self.xp.amin(evalf0_imag, axis=tt)
-            N = 1
-            for ssx in integrationVarsSamplings:
-                N *= ssx.shape[0]
-            print(N)
-            freqs_real = self.xp.zeros(paramsSamplings[0].shape[0])
-            freqs_imag = self.xp.zeros(paramsSamplings[0].shape[0])
-            M = paramsSamplings[0].shape[0]
-            y_rand = self.xp.random.random( (integrationVarsSamplings[0].shape[0],integrationVarsSamplings[1].shape[0], M))            
-            f_min_comp = f_min_real + 1j * f_min_imag
-            f_max_comp = f_max_real + 1j * f_max_imag
-            y_rand_comp = f_min_comp + y_rand*(f_max_comp-f_min_comp)
-            ind_below_comp = self.xp.where( self.xp.absolute(y_rand_comp) < self.xp.absolute(y_comp), 1, 0 )            
-            freqs_comp = f_max_comp*(( self.xp.sum(ind_below_comp, axis=tt)/float(N) )) * scaleFactor
-            return freqs_comp
+            return self.xp.absolute(mcReduction(integratedFunction(*integrationAndParamsVarSamplingGrids)) * scaleFactor)
+#            return integratedFunction(*integrationAndParamsVarSamplingGrids) * scaleFactor
 
-    
+
     # implemented methods: rect, trap, mc
     def IntegralEval(self, lh, integral, paramsAndRanges, integrationVarsSamplingSchemes=None, method='rect'):        
         paramVariables = []
@@ -192,13 +194,11 @@ class Integrator(object):
 #        weights_S = sp.symbols('weights_S', real=True)
 #        ff = weights_S * integral.function
         lambdaIntegrand = sp.lambdify((*integrationVariables, *paramVariables), integral.function, self.modules)
-
         integrationVariableSamplings = []
         smallIntegrationVariableSamplings = []
         parameterSamplings = []
         integrationVarsScheme = zip( integrationVariables, integrationVariablesLows, integrationVariablesHighs, integrationVarsPoints, integrationVarsSpacings)
         for integrationVariable, integrationVariableLow, integrationVariableHigh, integrationVarPoints, integrationVarSpacing in integrationVarsScheme:
-            # print(integrationVariable, integrationVariableLow, integrationVariableHigh, integrationVarPoints, integrationVarSpacing)            
             if method=='rect':
                 dx = (float(integrationVariableHigh)-float(integrationVariableLow))/float(integrationVarPoints-1)
                 s = self.getSampling(float(integrationVariableLow)+dx/2, float(integrationVariableHigh)-dx/2, integrationVarPoints-1, integrationVarSpacing)
@@ -213,8 +213,6 @@ class Integrator(object):
                 return
 
             integrationVariableSamplings.append(s)
-
-        # print(integrationVariableSamplings)
         for paramName, parameterLow, parameterHigh, parameterPoints, parameterSpacing in paramsAndRanges:    
             # print(paramName, parameterLow, parameterHigh, parameterPoints, parameterSpacing)
             if parameterSpacing!='provided':

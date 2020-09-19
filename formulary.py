@@ -3,6 +3,15 @@ import numpy as np
 import scipy
 from SEEING.sympyHelpers import *
 
+# in a formulary you annot have the same string as representation
+# for two different symbols, representing two different entities
+# if you put multiple formulas inside a dictionary, each defining 
+# and using a symbol represented by an "f", in fact you are have multiple,
+# unrelated symbols with the same representation. So a reworking of the formulas
+# is needed to unify the symbols variable in order to have a common "f" symbols
+# shared by the formulas. This allows a reasonable composition of the expressions.
+
+
 class Formulary(object):
     # each element of the formulas list is a tuple (_lhs, _rhs, _eq)
     def __init__(self, name='', names=[], formulas=[]):
@@ -15,16 +24,19 @@ class Formulary(object):
 
     def displayAll(self):
         for name, f in self.formulas.items():
-            display(f[2])
+            display()
 
     def getFormula(self, name):
         return self.formulas[name]
 
+    def __getitem__(self, key):
+        return self.formulas[key]
+    
     def getFormulaRhs(self, name):
-        return self.formulas[name][1]
+        return self.formulas[name].rhs
 
     def getFormulaLhs(self, name):
-        return self.formulas[name][0]
+        return self.formulas[name].lhs
 
     def getRestrictedLambda(
             self,
@@ -32,7 +44,7 @@ class Formulary(object):
             subsDict,
             independentVarNames,
             modules='scipy'):
-        _, _expr, _ = self.getFormula(name)
+        _expr = self.getFormula(name).rhs
         return getRestrictedLambdaBasic(
             _expr, subsDict, independentVarNames, modules)
 

@@ -37,10 +37,6 @@ def gamma__1(n):
 
 
 gpulib = {
-    'sqrt': cp.sqrt,
-    'cos': cp.cos,
-    'sin': cp.sin,
-    'exp': cp.exp,
     'pow': cp.power,
     'atan': cp.arctan,
     'atan2': cp.arctan2,
@@ -60,3 +56,12 @@ backendLibs = {
     cp: gpulib,
     np: cpulib
 }
+
+'''
+Not necessary: 
+
+    'sqrt': cp.sqrt,
+    'cos': cp.cos,
+    'sin': cp.sin,
+    'exp': cp.exp,
+'''

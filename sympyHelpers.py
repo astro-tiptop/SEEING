@@ -66,6 +66,7 @@ def evaluateFormula(
 
 from sympy.parsing import latex
 
+
 def latexToSympy(latexText):
     return latex.parse_latex(latexText)
 
@@ -76,7 +77,6 @@ def sympyToLatex(expr):
 
 def sympyToString(expr):
     return sp.srepr(expr)
-    
     
     
     
