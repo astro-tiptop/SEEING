@@ -24,7 +24,7 @@ class Formulary(object):
 
     def displayAll(self):
         for name, f in self.formulas.items():
-            display()
+            display(f)
 
     def getFormula(self, name):
         return self.formulas[name]
@@ -43,7 +43,7 @@ class Formulary(object):
             name,
             subsDict,
             independentVarNames,
-            modules='scipy'):
+            modules=cpulib):
         _expr = self.getFormula(name).rhs
         return getRestrictedLambdaBasic(
             _expr, subsDict, independentVarNames, modules)
@@ -54,7 +54,7 @@ class Formulary(object):
             subsDict,
             independentVarNames,
             samples,
-            modules='scipy'):
+            modules=cpulib):
         p_f = self.getRestrictedLambda(
             name, subsDict, independentVarNames, modules)
         return evaluateLambda(p_f, independentVarNames, samples)

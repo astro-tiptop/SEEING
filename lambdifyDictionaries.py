@@ -7,6 +7,7 @@ import scipy.special
 import cupyx
 import cupyx.scipy
 import cupyx.scipy.special
+import cupyx.scipy.linalg
 
 
 cpulibExt = {
@@ -22,15 +23,23 @@ cpulibExt = {
 
 cpulib = ["scipy", cpulibExt] 
 
+#
+# bessel j per ordine non intero, da fare
+#
 
-def bessel__n(n, z):
+def besselj__n(n, z):
+    if n<0:
+        return -1**(-n) * besselj__n(-n, z)
     if n==0:
         return cupyx.scipy.special.j0(z)
     elif n==1:
         return cupyx.scipy.special.j1(z)
     elif n>=2:
-        return 2*bessel__n(n-1, z)/z - bessel__n(n-2, z)
+        return 2*besselj__n(int(n)-1, z)/z - besselj__n(int(n)-2, z)
 
+
+def besselk__n(a, z):
+    return (besselj__n(a,z)*cp.cos(a*cp.pi) - besselj__n(-a,z) ) / cp.sin(a*cp.pi)
     
 def gamma__1(n):
     return cupyx.scipy.special.gamma(n+1)
@@ -42,7 +51,8 @@ gpulib = {
     'atan2': cp.arctan2,
     'I': 1j,
     'pi': cp.pi,
-    'besselj': bessel__n,
+    'besselj': besselj__n,
+    'besselk': besselk__n,
     'factorial': gamma__1,
     'gamma': cupyx.scipy.special.gamma,
     'erf': cupyx.scipy.special.erf
