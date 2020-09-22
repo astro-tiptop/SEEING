@@ -21,6 +21,13 @@ def subsParamsByName(expr1, subsDict):
     return expr
 
 
+def lambdifyByName(expr, symbolsNames, amodules):
+    symbolsList = []
+    for sName in symbolsNames:
+        symbolsList.append(getSymbolByName(expr, sName))
+    return sp.lambdify( symbolsList, expr, modules=amodules )
+
+
 def getRestrictedLambdaBasic(
         expr,
         subsDict,
