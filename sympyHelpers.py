@@ -1,7 +1,7 @@
 import sympy as sp
 import inspect
 from functools import reduce
-from SEEING.lambdifyDictionaries import *
+from lambdifyDictionaries import *
 
 
 def getSymbolByName(expr, sname):

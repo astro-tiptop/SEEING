@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
-from SEEING.sympyHelpers import *
+from sympyHelpers import *
 
 # in a formulary you annot have the same string as representation
 # for two different symbols, representing two different entities
