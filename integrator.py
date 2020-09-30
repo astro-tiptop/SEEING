@@ -9,22 +9,27 @@ class Integrator(object):
     # integrals) at each evaluation point
     def __init__(
             self,
-            mode='intensity',
             xp=np,
-            evalType=float):
+            evalType=float,
+            integrationMode='intensity'):        
         self.xp = xp
         self.modules = backendLibs[self.xp]        
         self.evalType = evalType
-        if mode == 'intensity':
+        self.setIntegrationMode(integrationMode)
+
+        
+    def setIntegrationMode(self, integrationMode):
+        self.integrationMode = integrationMode
+        if integrationMode == 'intensity':
             self.intensityMap = self.xp.square
             self.postMap = self.xp.absolute
-        elif mode == 'absolute':
+        elif integrationMode == 'absolute':
             self.intensityMap = lambda x: x
             self.postMap = self.xp.absolute
         else:
             self.intensityMap = lambda x: x
             self.postMap = lambda x: x
-
+        
             
     def getSampling(self, l, h, npoints, spacing='linear'):
         if spacing == 'geometric':
@@ -172,6 +177,8 @@ class Integrator(object):
             return self.xp.absolute(mcReduction(integratedFunction(*integrationAndParamsVarSamplingGrids)) * scaleFactor)
 #            return integratedFunction(*integrationAndParamsVarSamplingGrids) * scaleFactor
 
+    def IntegralEvalE(self, eeq, paramsAndRanges, integrationVarsSamplingSchemes=None, method='rect'):
+        return self.IntegralEval(eeq.lhs, eeq.rhs, paramsAndRanges, integrationVarsSamplingSchemes, method)
 
     # implemented methods: rect, trap, mc
     def IntegralEval(self, lh, integral, paramsAndRanges, integrationVarsSamplingSchemes=None, method='rect'):        
@@ -224,3 +231,6 @@ class Integrator(object):
                 parameterSamplings.append(self.xp.asarray(parameterLow, dtype=self.evalType))
 
         return self.outputData(parameterSamplings), self.outputData(self.intensityMap(self.parametricIntegralEvaluation(integrationVariableSamplings, parameterSamplings, lambdaIntegrand, method, smallIntegrationVariableSamplings)))
+
+    
+Calculator = Integrator
