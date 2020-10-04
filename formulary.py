@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 from sympyHelpers import *
+from sympy.parsing.sympy_parser import parse_expr
 
 # in a formulary you annot have the same string as representation
 # for two different symbols, representing two different entities
@@ -34,6 +35,34 @@ class Formulary(object):
                 else:
                     self.functions.update(ff.atoms(sp.Function))                    
 
+
+    def writeToFile(self, filename):
+        f = open(filename, "w")
+        for name, expr in self.formulas.items():
+            f.write(name+"\n")
+            f.write(str(expr)+"\n")
+        f.close()
+        
+
+    def loadFromFile(filename):
+        names = []
+        formulas = []
+        f = open(filename, "r")
+        for aname in f:
+            names.append(aname.replace('\n', ''))
+            ss = f.readline().replace('\n', '')
+            ss = ss.replace('lambda', 'lambda_')
+            ss = ss.replace('^', '__')
+            aformula = parse_expr(ss, evaluate=False)
+            aformula = subsParamsByName(aformula, {'lambda_': sp.symbols('lambda')})
+            
+            aformula = subsSpecialParams(aformula, '__', '^')
+
+            formulas.append(aformula)
+        f.close()
+        return Formulary('A', names, formulas)
+        
+        
     def addFormula(self, name, formula):
         self.formulas[name] = formula
 
