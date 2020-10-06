@@ -33,7 +33,7 @@ class TestSubsParamsByName(unittest.TestCase):
         self.assertEqual(getSymbolByName(result, aname2), y)
 
         
-class TestGetRestrictedLambdaBasic(unittest.TestCase):
+class TestGetRestrictedLambda(unittest.TestCase):
     def test_simple_expression(self):
         """
         Test 
@@ -43,7 +43,7 @@ class TestGetRestrictedLambdaBasic(unittest.TestCase):
         x = sp.symbols(aname1)
         y = sp.symbols(aname2)
         aexpr = x**2 + y**2
-        alambda = getRestrictedLambdaBasic(aexpr, {aname1:1}, ['y'])
+        alambda = getRestrictedLambda(aexpr, {aname1:1}, ['y'])
         result = alambda(2*np.ones(10))
         self.assertTrue(np.allclose(result, 5*np.ones(10)))
 

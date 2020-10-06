@@ -107,7 +107,7 @@ class Formulary(object):
         _expr = self.getFormula(name)
         if type(_expr)==sp.Eq:
             _expr = _expr.rhs
-        return getRestrictedLambdaBasic(
+        return getRestrictedLambda(
             _expr, subsDict, independentVarNames, modules)
 
     def evaluateFormula(
