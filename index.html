@@ -13077,8 +13077,9 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Numerical-code-generation-from-symbolic-expressions-in-Python">Numerical code generation from symbolic expressions in Python<a class="anchor-link" href="#Numerical-code-generation-from-symbolic-expressions-in-Python">&#182;</a></h1><h4 id="Fabio-Rossi">Fabio Rossi<a class="anchor-link" href="#Fabio-Rossi">&#182;</a></h4><h4 id="email:-fabio.rossi@inaf.it">email: fabio.rossi@inaf.it<a class="anchor-link" href="#email:-fabio.rossi@inaf.it">&#182;</a></h4><h4 id="Github:-https://github.com/FabioRossiArcetri">Github: <a href="https://github.com/FabioRossiArcetri">https://github.com/FabioRossiArcetri</a><a class="anchor-link" href="#Github:-https://github.com/FabioRossiArcetri">&#182;</a></h4><h4 id="This-work-was-developed-in-the-context-of-the-simulations-for-the-MAVIS/VLT-instrument">This work was developed in the context of the simulations for the MAVIS/VLT instrument<a class="anchor-link" href="#This-work-was-developed-in-the-context-of-the-simulations-for-the-MAVIS/VLT-instrument">&#182;</a></h4><h4 id="MAVIS-simulations-team-@Arcetri:-Cedric-Plantet,-Guido-Agapito,-Fabio-Rossi">MAVIS simulations team @Arcetri: Cedric Plantet, Guido Agapito, Fabio Rossi<a class="anchor-link" href="#MAVIS-simulations-team-@Arcetri:-Cedric-Plantet,-Guido-Agapito,-Fabio-Rossi">&#182;</a></h4><ul>
-<li>Thanks to the support and for providing the mathematical content!</li>
+<h1 id="Numerical-code-generation-from-symbolic-expressions-in-Python">Numerical code generation from symbolic expressions in Python<a class="anchor-link" href="#Numerical-code-generation-from-symbolic-expressions-in-Python">&#182;</a></h1><h4 id="Fabio-Rossi">Fabio Rossi<a class="anchor-link" href="#Fabio-Rossi">&#182;</a></h4><h4 id="email:-fabio.rossi@inaf.it">email: fabio.rossi@inaf.it<a class="anchor-link" href="#email:-fabio.rossi@inaf.it">&#182;</a></h4><h4 id="Github:-https://github.com/FabioRossiArcetri">Github: <a href="https://github.com/FabioRossiArcetri">https://github.com/FabioRossiArcetri</a><a class="anchor-link" href="#Github:-https://github.com/FabioRossiArcetri">&#182;</a></h4><h4 id="This-work-was-developed-in-the-context-of-the-simulations-for-the-MAVIS/VLT-instrument">This work was developed in the context of the simulations for the MAVIS/VLT instrument<a class="anchor-link" href="#This-work-was-developed-in-the-context-of-the-simulations-for-the-MAVIS/VLT-instrument">&#182;</a></h4><h4 id="MAVIS-simulations-team-@Arcetri:">MAVIS simulations team @Arcetri:<a class="anchor-link" href="#MAVIS-simulations-team-@Arcetri:">&#182;</a></h4><ul>
+<li>AO expertise: Cedric Plantet, Guido Agapito - Thanks for the support!</li>
+<li>Python implementation: Fabio Rossi</li>
 </ul>
 <h5 id="&#8220;Astrobign&#233;&#8221;-presentation,-Arcetri-06/10/2020">&#8220;Astrobign&#233;&#8221; presentation, Arcetri 06/10/2020<a class="anchor-link" href="#&#8220;Astrobign&#233;&#8221;-presentation,-Arcetri-06/10/2020">&#182;</a></h5>
 </div>
@@ -13175,7 +13176,7 @@ div#notebook {
 </ul>
 </li>
 <li>Provide a simple way to generate NumPy of CuPy code, so that you quickly evaluate expressions on the GPU<ul>
-<li>Immplement functions that are not provided by CuPy or NumPy but do exist in SymPy</li>
+<li>Implement functions that are not provided by CuPy or NumPy but do exist in SymPy</li>
 </ul>
 </li>
 <li>Develop Backend agnostic Numerical Algorithms<ul>
@@ -13510,7 +13511,7 @@ $\displaystyle - \frac{i E_{0} z_{1} \left(i \lambda \frac{1}{2 \pi \sqrt{z_{1}^
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.image.AxesImage at 0x7f359027e748&gt;</pre>
+<pre>&lt;matplotlib.image.AxesImage at 0x7fb350139048&gt;</pre>
 </div>
 
 </div>
@@ -13565,7 +13566,7 @@ $\displaystyle - \frac{i E_{0} z_{1} \left(i \lambda \frac{1}{2 \pi \sqrt{z_{1}^
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.image.AxesImage at 0x7f35900909b0&gt;</pre>
+<pre>&lt;matplotlib.image.AxesImage at 0x7fb350062048&gt;</pre>
 </div>
 
 </div>
@@ -13886,7 +13887,7 @@ $\displaystyle J_{n}\left(x\right)$
 def _lambdifygenerated(x, n):
     return (besselj(n, x))
 
-&lt;function besselj__n at 0x7f3592a5f598&gt;
+&lt;function besselj__n at 0x7fb351a0a598&gt;
 </pre>
 </div>
 </div>
@@ -14603,7 +14604,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>156 ms ± 2.81 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+<pre>149 ms ± 1.03 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 </pre>
 </div>
 </div>
@@ -14635,7 +14636,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>9.27 ms ± 5.23 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+<pre>9.28 ms ± 5.88 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
 </pre>
 </div>
 </div>
@@ -14667,7 +14668,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>191 µs ± 4.75 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
+<pre>189 µs ± 55 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
 </pre>
 </div>
 </div>
