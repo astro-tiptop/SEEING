@@ -13202,8 +13202,9 @@ a.anchor-link {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Numerical-code-generation-from-symbolic-expressions-in-Python">Numerical code generation from symbolic expressions in Python<a class="anchor-link" href="#Numerical-code-generation-from-symbolic-expressions-in-Python">&#182;</a></h1><h4 id="Fabio-Rossi">Fabio Rossi<a class="anchor-link" href="#Fabio-Rossi">&#182;</a></h4><h4 id="email:-fabio.rossi@inaf.it">email: fabio.rossi@inaf.it<a class="anchor-link" href="#email:-fabio.rossi@inaf.it">&#182;</a></h4><h4 id="Github:-https://github.com/FabioRossiArcetri">Github: <a href="https://github.com/FabioRossiArcetri">https://github.com/FabioRossiArcetri</a><a class="anchor-link" href="#Github:-https://github.com/FabioRossiArcetri">&#182;</a></h4><h4 id="This-work-was-developed-in-the-context-of-the-simulations-for-the-MAVIS/VLT-instrument">This work was developed in the context of the simulations for the MAVIS/VLT instrument<a class="anchor-link" href="#This-work-was-developed-in-the-context-of-the-simulations-for-the-MAVIS/VLT-instrument">&#182;</a></h4><h4 id="MAVIS-simulations-team-@Arcetri:-Cedric-Plantet,-Guido-Agapito,-Fabio-Rossi">MAVIS simulations team @Arcetri: Cedric Plantet, Guido Agapito, Fabio Rossi<a class="anchor-link" href="#MAVIS-simulations-team-@Arcetri:-Cedric-Plantet,-Guido-Agapito,-Fabio-Rossi">&#182;</a></h4><ul>
-<li>Thanks to the support and for providing the mathematical content!</li>
+<h1 id="Numerical-code-generation-from-symbolic-expressions-in-Python">Numerical code generation from symbolic expressions in Python<a class="anchor-link" href="#Numerical-code-generation-from-symbolic-expressions-in-Python">&#182;</a></h1><h4 id="Fabio-Rossi">Fabio Rossi<a class="anchor-link" href="#Fabio-Rossi">&#182;</a></h4><h4 id="email:-fabio.rossi@inaf.it">email: fabio.rossi@inaf.it<a class="anchor-link" href="#email:-fabio.rossi@inaf.it">&#182;</a></h4><h4 id="Github:-https://github.com/FabioRossiArcetri">Github: <a href="https://github.com/FabioRossiArcetri">https://github.com/FabioRossiArcetri</a><a class="anchor-link" href="#Github:-https://github.com/FabioRossiArcetri">&#182;</a></h4><h4 id="This-work-was-developed-in-the-context-of-the-simulations-for-the-MAVIS/VLT-instrument">This work was developed in the context of the simulations for the MAVIS/VLT instrument<a class="anchor-link" href="#This-work-was-developed-in-the-context-of-the-simulations-for-the-MAVIS/VLT-instrument">&#182;</a></h4><h4 id="MAVIS-simulations-team-@Arcetri:">MAVIS simulations team @Arcetri:<a class="anchor-link" href="#MAVIS-simulations-team-@Arcetri:">&#182;</a></h4><ul>
+<li>AO expertise: Cedric Plantet, Guido Agapito - Thanks for the support!</li>
+<li>Python implementation: Fabio Rossi</li>
 </ul>
 <h5 id="&#8220;Astrobign&#233;&#8221;-presentation,-Arcetri-06/10/2020">&#8220;Astrobign&#233;&#8221; presentation, Arcetri 06/10/2020<a class="anchor-link" href="#&#8220;Astrobign&#233;&#8221;-presentation,-Arcetri-06/10/2020">&#182;</a></h5>
 </div>
@@ -13300,7 +13301,7 @@ a.anchor-link {
 </ul>
 </li>
 <li>Provide a simple way to generate NumPy of CuPy code, so that you quickly evaluate expressions on the GPU<ul>
-<li>Immplement functions that are not provided by CuPy or NumPy but do exist in SymPy</li>
+<li>Implement functions that are not provided by CuPy or NumPy but do exist in SymPy</li>
 </ul>
 </li>
 <li>Develop Backend agnostic Numerical Algorithms<ul>
@@ -13479,9 +13480,6 @@ $\displaystyle - \frac{i E_{0} z_{1} \left(i \lambda \frac{1}{2 \pi \sqrt{z_{1}^
 <span class="n">subsDictC</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;E_0&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;z_1&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">apertureRadius</span><span class="p">,</span> <span class="s1">&#39;x_0&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;y_0&#39;</span><span class="p">:</span> <span class="n">apertureRadius</span><span class="p">,</span> <span class="s1">&#39;lambda&#39;</span><span class="p">:</span> <span class="n">waveLength</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span><span class="n">apertureRadius</span><span class="p">}</span>
 <span class="n">paramAndRanges</span> <span class="o">=</span> <span class="p">[(</span> <span class="s1">&#39;x_1&#39;</span><span class="p">,</span> <span class="o">-</span><span class="n">apertureRadius</span><span class="p">,</span> <span class="n">apertureRadius</span><span class="p">,</span> <span class="n">subdiv_points</span><span class="p">,</span> <span class="s1">&#39;linear&#39;</span> <span class="p">),</span>
                   <span class="p">(</span> <span class="s1">&#39;y_1&#39;</span><span class="p">,</span> <span class="o">-</span><span class="n">apertureRadius</span><span class="p">,</span> <span class="n">apertureRadius</span><span class="p">,</span> <span class="n">subdiv_points</span><span class="p">,</span> <span class="s1">&#39;linear&#39;</span> <span class="p">)]</span>
-<span class="c1">#xx, ez = propMethodsCartesian.evaluateFormula(&quot;Rayleigh-Sommerfeld Arg&quot;, subsDictC, paramAndRanges, mCalc)</span>
-<span class="c1">#fig, ax = plt.subplots(figsize=(10,10))</span>
-<span class="c1">#ax.imshow( np.real(ez), cmap=&#39;hot&#39; )</span>
 <span class="n">propMethodsCartesian</span><span class="o">.</span><span class="n">plotFormula</span><span class="p">(</span><span class="s2">&quot;Rayleigh-Sommerfeld Arg&quot;</span><span class="p">,</span> <span class="n">subsDictC</span><span class="p">,</span> <span class="n">paramAndRanges</span><span class="p">,</span> <span class="n">mCalc</span><span class="p">)</span>
 </pre></div>
 
@@ -13635,7 +13633,7 @@ $\displaystyle - \frac{i E_{0} z_{1} \left(i \lambda \frac{1}{2 \pi \sqrt{z_{1}^
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.image.AxesImage at 0x7fe6f80cc940&gt;</pre>
+<pre>&lt;matplotlib.image.AxesImage at 0x7fb350139048&gt;</pre>
 </div>
 
 </div>
@@ -13667,9 +13665,7 @@ $\displaystyle - \frac{i E_{0} z_{1} \left(i \lambda \frac{1}{2 \pi \sqrt{z_{1}^
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">subsDict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;E_0&#39;</span><span class="p">:</span> <span class="n">ez0_c</span><span class="p">,</span> <span class="s1">&#39;z_1&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">apertureRadius</span><span class="p">,</span> <span class="s1">&#39;lambda&#39;</span><span class="p">:</span> <span class="n">waveLength</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span><span class="n">apertureRadius</span><span class="p">}</span>
 <span class="n">paramsAndRanges</span> <span class="o">=</span> <span class="p">[</span> <span class="p">(</span><span class="s1">&#39;x_1&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">apertureRadius</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">apertureRadius</span><span class="p">,</span> <span class="n">subdiv_points</span><span class="p">,</span> <span class="s1">&#39;linear&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;y_1&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">apertureRadius</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">apertureRadius</span><span class="p">,</span> <span class="n">subdiv_points</span><span class="p">,</span> <span class="s1">&#39;linear&#39;</span><span class="p">)]</span>
 <span class="n">eeq</span> <span class="o">=</span> <span class="n">propMethodsCartesian</span><span class="o">.</span><span class="n">getFormula</span><span class="p">(</span><span class="s2">&quot;Rayleigh-Sommerfeld&quot;</span><span class="p">)</span>
-
 <span class="n">xplot</span><span class="p">,</span> <span class="n">fplot1</span> <span class="o">=</span> <span class="n">mCalc</span><span class="o">.</span><span class="n">IntegralEvalE</span><span class="p">(</span><span class="n">subsParamsByName</span><span class="p">(</span><span class="n">eeq</span><span class="p">,</span> <span class="n">subsDict</span><span class="p">),</span> <span class="n">paramsAndRanges</span><span class="p">)</span> 
-
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">fplot1</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;hot&#39;</span> <span class="p">)</span>
 </pre></div>
@@ -13690,7 +13686,7 @@ $\displaystyle - \frac{i E_{0} z_{1} \left(i \lambda \frac{1}{2 \pi \sqrt{z_{1}^
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.image.AxesImage at 0x7fe6f830d320&gt;</pre>
+<pre>&lt;matplotlib.image.AxesImage at 0x7fb350062048&gt;</pre>
 </div>
 
 </div>
@@ -13864,7 +13860,7 @@ $\displaystyle \operatorname{W_{\phi}}{\left(\rho \right)} = \int\limits_{0.001}
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">inspect</span>
@@ -13939,7 +13935,7 @@ def _lambdifygenerated(x):
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># somewhere we defined:</span>
@@ -13961,7 +13957,7 @@ def _lambdifygenerated(x):
 </div></div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[33]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">seeing</span> <span class="kn">import</span> <span class="o">*</span>
@@ -14011,7 +14007,7 @@ $\displaystyle J_{n}\left(x\right)$
 def _lambdifygenerated(x, n):
     return (besselj(n, x))
 
-&lt;function besselj__n at 0x7fe6fd7ef598&gt;
+&lt;function besselj__n at 0x7fb351a0a598&gt;
 </pre>
 </div>
 </div>
@@ -14106,7 +14102,7 @@ def _lambdifygenerated(x, n):
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span> <span class="p">:</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">*</span><span class="n">c</span>
@@ -14138,7 +14134,7 @@ def _lambdifygenerated(x, n):
 </div></div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># also useful when you want to do have a function that returns a function:</span>
@@ -14184,7 +14180,7 @@ def _lambdifygenerated(x, n):
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># lets say we have this function returning a SymPy expression defined somewhere</span>
@@ -14236,7 +14232,7 @@ $\displaystyle \log{\left(\sigma \left|{y_{0}}\right| + 1 \right)} + e^{- \frac{
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">anExpr</span><span class="o">.</span><span class="n">free_symbols</span><span class="p">)</span>
@@ -14264,7 +14260,7 @@ $\displaystyle \log{\left(\sigma \left|{y_{0}}\right| + 1 \right)} + e^{- \frac{
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>{y_0, sigma, x_0}
+<pre>{y_0, x_0, sigma}
 </pre>
 </div>
 </div>
@@ -14319,7 +14315,7 @@ $\displaystyle \log{\left(0.5 \left|{y_{0}}\right| + 1 \right)} + e^{- 2.0 x_{0}
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">sympy</span> <span class="k">as</span> <span class="nn">sp</span>
@@ -14359,7 +14355,7 @@ $\displaystyle e^{- a x^{2} - b y^{2}}$
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Or define an integral</span>
@@ -14394,7 +14390,7 @@ $\displaystyle \int\limits_{-\infty}^{\infty}\int\limits_{-\infty}^{\infty} e^{-
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Specialize</span>
@@ -14430,7 +14426,7 @@ $\displaystyle \frac{\sqrt{2} \pi}{2}$
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#You could also do real symbolic computations… : </span>
@@ -14477,7 +14473,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -14521,7 +14517,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 </div></div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">x_cpu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
@@ -14556,7 +14552,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">x_gpu</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>  <span class="c1"># create an array in the current device</span>
@@ -14598,7 +14594,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -14643,7 +14639,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
@@ -14675,7 +14671,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 </div></div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">fgpu</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">cp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">cp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
@@ -14707,7 +14703,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 </div></div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%time</span>it
@@ -14728,7 +14724,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>152 ms ± 2.25 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+<pre>149 ms ± 1.03 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 </pre>
 </div>
 </div>
@@ -14739,7 +14735,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%time</span>it
@@ -14760,7 +14756,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>9.29 ms ± 6.61 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+<pre>9.28 ms ± 5.88 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
 </pre>
 </div>
 </div>
@@ -14771,7 +14767,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 </div></div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%time</span>it
@@ -14792,7 +14788,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>189 µs ± 98.6 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
+<pre>189 µs ± 55 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
 </pre>
 </div>
 </div>
@@ -14803,7 +14799,7 @@ $\displaystyle - 2 b y e^{- a x^{2} - b y^{2}}$
 </div></div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">paramAndRanges</span> <span class="o">=</span> <span class="p">[(</span> <span class="s1">&#39;x_1&#39;</span><span class="p">,</span> <span class="o">-</span><span class="n">apertureRadius</span><span class="p">,</span> <span class="n">apertureRadius</span><span class="p">,</span> <span class="n">subdiv_points</span><span class="p">,</span> <span class="s1">&#39;linear&#39;</span> <span class="p">)]</span>
