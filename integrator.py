@@ -66,7 +66,7 @@ class Integrator(object):
         else:
             evalFunctionV = np.vectorize(evalFunction)
             def evaluableFunction(*paramsSamplingGrids):
-                return evaluFunctionV(*paramsSamplingGrids)
+                return evalFunctionV(*paramsSamplingGrids)
         
 #        print(inspect.getmembers(evalFunction))
 #        print(inspect.getsource(evalFunction))

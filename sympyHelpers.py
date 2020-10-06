@@ -80,7 +80,7 @@ def getRestrictedLambda(
         expr,
         subsDict,
         independentVarNames,
-        lmodules=cpulib):
+        modules=cpulib):
     """Wraps around sympy.lambdify to generate a lambda function from a given sympy expression. 
     The set of symbols to be passed to sympy.lambdify is specified as a list of strings. 
     If one or more symbols are not found in the expressions, dummy symbols are introduced.
@@ -112,7 +112,7 @@ def getRestrictedLambda(
             ll.append(sp.Symbol('dummy' + str(ii)))
             ii += 1
     tt = tuple(ll)
-    return sp.lambdify(tt, expr, lmodules)
+    return sp.lambdify(tt, expr, modules)
 
 
 def evaluateLambda(p_f, independentVarNames, samples, xp=np):
