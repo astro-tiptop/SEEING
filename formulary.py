@@ -136,10 +136,16 @@ class Formulary(object):
             fig = plt.figure(figsize=(7, 7))
             axs = fig.add_subplot(111)
             axs.axis('auto')
-            axs.plot(np.real(_data))
+            if log:
+                plt.xscale('log')
+                plt.yscale('log')
+            axs.plot(_params[0], np.real(_data))
         elif nvars == 2:
             fig, ax = plt.subplots(figsize=(7,7))
-            ax.imshow(np.real(_data), cmap='hot')
+            if log:
+                ax.imshow(np.log(np.abs(_data)), cmap='hot')
+            else:
+                ax.imshow(np.real(_data), cmap='hot')
         else:
             pass
         plt.show()

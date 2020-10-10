@@ -172,7 +172,7 @@ def evaluateFormula(
         The result of the expressions evaluation 
     """
 
-    p_f = getRestrictedLambdac(expr, subsDict, independentVarNames, modules)
+    p_f = getRestrictedLambda(expr, subsDict, independentVarNames, modules)
     return evaluateLambda(p_f, independentVarNames, samples)
 
 
