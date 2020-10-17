@@ -172,11 +172,11 @@ def besselj__n(n, z):
     if n<0:
         return -1**(-n) * besselj__n(-n, z)
     if n==0:
-        return cupyx.scipy.special.j0(z)
+        return cupyx.scipy.special.j0(cp.real(z))
     elif n==1:
-        return cupyx.scipy.special.j1(z)
+        return cupyx.scipy.special.j1(cp.real(z))
     elif n>=2:
-        return 2*besselj__n(int(n)-1, z)/z - besselj__n(int(n)-2, z)
+        return 2*besselj__n(int(n)-1, z)/cp.real(z) - besselj__n(int(n)-2, z)
 
     
 def bessely__n(n, z):
@@ -198,8 +198,11 @@ def hankel1__n(n, z):
 def hankel2__n(n, z):
     return besselj__n(n, z) - 1j * bessely__n(n, z)
 
+def floatArray(z):
+    return cp.array(z, cp.float64)
 
 gpulib = {
+    'ImmutableDenseMatrix': floatArray,
     'E': np.exp(1.0),
     'I': 1j,
     'pi': cp.pi,
