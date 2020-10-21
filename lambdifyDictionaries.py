@@ -176,7 +176,7 @@ def besselj__n(n, z):
     elif n==1:
         return cupyx.scipy.special.j1(cp.real(z))
     elif n>=2:
-        return 2*besselj__n(int(n)-1, z)/cp.real(z) - besselj__n(int(n)-2, z)
+        return 2*(n-1)*besselj__n(int(n)-1, z)/cp.real(z) - besselj__n(int(n)-2, z)
 
     
 def bessely__n(n, z):
