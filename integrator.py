@@ -39,7 +39,7 @@ class Integrator(object):
         elif spacing == 'random':
             return l + self.xp.random.random(npoints)*(h-l)
         else:
-            return self.xp.asarray(np.linspace(l, h, npoints), dtype=self.evalType)
+            return self.xp.asarray(np.linspace(l, h, int(npoints), dtype=np.float64), dtype=self.evalType)
 
 
     def outputData(self, _data):
@@ -51,9 +51,9 @@ class Integrator(object):
         
     def getWeightsArray(self, n):
         p0 = np.ones(n, dtype=np.float64)
-        p0[0] = 0.5
-        p0[-1] = 0.5
-        return np.asarray(p0, dtype=np.float64)        
+        p0[0] = np.float64(0.5)
+        p0[-1] = np.float64(0.5)
+        return p0 #np.asarray(p0, dtype=np.float64)        
 
     
     def parametricEvaluation(self, paramsSamplings, evalFunction):
@@ -106,14 +106,15 @@ class Integrator(object):
         tt = (1)
         if nVars>1:
             tt=tuple(range(nVars))
-
+            
         # for Rectangles method
         def genericSum(xx):
             return self.xp.sum( xx, axis=tt )
             
         # for Trapezoidal method
         def genericReduction(xx):
-            return self.postMap( self.xp.sum( xx * weightsGrid, axis=tt ) )
+            weightsGrid1 = weightsGrid.reshape(xx.shape)
+            return self.postMap( self.xp.sum( xx * weightsGrid1, axis=tt ) )
 
         N = 1
         for ssx in integrationVarsSamplings:
@@ -159,11 +160,14 @@ class Integrator(object):
                 def integratedFunction(*integrationAndParamsVarSamplingGrids):
                     return integrandFunctionV(*integrationAndParamsVarSamplingGrids)
             
-        scaleFactor = 1.0
+        scaleFactor = np.float64(1.0)
         for ii in range(nVars):
             if (len(integrationVarsSamplings[ii])>1):
-#                scaleFactor *= (integrationVarsSamplings[ii][1] - integrationVarsSamplings[ii][0])
-                scaleFactor *= (integrationVarsSamplings[ii][1] - integrationVarsSamplings[ii][0])
+                if method=='trap':
+                    nn = np.float64(integrationVarsSamplings[ii].shape[0])
+                    scaleFactor *= (np.float64(integrationVarsSamplings[ii][-1]) - np.float64(integrationVarsSamplings[ii][0]))/(nn-1)
+                else:
+                    scaleFactor *= integrationVarsSamplings[ii][1] - integrationVarsSamplings[ii][0]              
         if method=='trap':
             return scaleFactor * genericReduction(integratedFunction(*integrationAndParamsVarSamplingGrids))
         elif method=='rect' or method=='raw':
@@ -175,7 +179,7 @@ class Integrator(object):
                 if (len(smallSamplings[ii])>1):
                     scaleFactor *= (smallSamplings[ii][-1] - smallSamplings[ii][0])
             return self.xp.absolute(mcReduction(integratedFunction(*integrationAndParamsVarSamplingGrids)) * scaleFactor)
-#            return integratedFunction(*integrationAndParamsVarSamplingGrids) * scaleFactor
+
 
     def IntegralEvalE(self, eeq, paramsAndRanges, integrationVarsSamplingSchemes=None, method='rect'):
         return self.IntegralEval(eeq.lhs, eeq.rhs, paramsAndRanges, integrationVarsSamplingSchemes, method)
@@ -209,11 +213,11 @@ class Integrator(object):
         for integrationVariable, integrationVariableLow, integrationVariableHigh, integrationVarPoints, integrationVarSpacing in integrationVarsScheme:
             if method=='rect':
                 dx = (float(integrationVariableHigh)-float(integrationVariableLow))/float(integrationVarPoints-1)
-                s = self.getSampling(float(integrationVariableLow)+dx/2, float(integrationVariableHigh)-dx/2, integrationVarPoints-1, integrationVarSpacing)
+                s = self.getSampling(float(integrationVariableLow)+dx/2, float(integrationVariableHigh)-dx/2, float(integrationVarPoints-1), integrationVarSpacing)
             elif method=='raw':
                 s = self.getSampling(float(integrationVariableLow), float(integrationVariableHigh), integrationVarPoints, integrationVarSpacing)
             elif method=='trap':
-                s = self.getSampling(float(integrationVariableLow), float(integrationVariableHigh), integrationVarPoints, integrationVarSpacing)
+                s = self.getSampling(float(integrationVariableLow), float(integrationVariableHigh), float(integrationVarPoints), integrationVarSpacing)
             elif method=='mc':
                 s = self.getSampling(float(integrationVariableLow), float(integrationVariableHigh), integrationVarPoints, 'random')
                 s_small = self.getSampling(float(integrationVariableLow), float(integrationVariableHigh), integrationVarPoints, 'linear')
