@@ -44,7 +44,10 @@ class Integrator(object):
 
     def outputData(self, _data):
         if self.xp == cp:
-            return cp.asnumpy(_data)
+            if isinstance(_data, list):
+                return [ cp.asnumpy(x) for x in _data ]
+            else:
+                return cp.asnumpy(_data)
         else:
             return _data
         
@@ -234,7 +237,8 @@ class Integrator(object):
             else:
                 parameterSamplings.append(self.xp.asarray(parameterLow, dtype=self.evalType))
 
-        return self.outputData(parameterSamplings), self.outputData(self.intensityMap(self.parametricIntegralEvaluation(integrationVariableSamplings, parameterSamplings, lambdaIntegrand, method, smallIntegrationVariableSamplings)))
-
+        oo1 = parameterSamplings
+        oo2 = self.intensityMap(self.parametricIntegralEvaluation(integrationVariableSamplings, parameterSamplings, lambdaIntegrand, method, smallIntegrationVariableSamplings))
+        return self.outputData(oo1), self.outputData(oo2)
     
 Calculator = Integrator
