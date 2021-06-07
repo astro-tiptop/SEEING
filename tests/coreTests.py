@@ -1,9 +1,6 @@
-DEV_PATH = '/home/frossi/dev/'
 import sys
-if not DEV_PATH in sys.path:
-    sys.path.append(DEV_PATH)
 
-from SEEING.seeing import *
+from seeing import *
 import unittest
 
 
