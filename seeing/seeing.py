@@ -1,3 +1,3 @@
-from sympyHelpers import *
-from formulary import *
-from integrator import *
+from seeing.sympyHelpers import *
+from seeing.formulary import *
+from seeing.integrator import *

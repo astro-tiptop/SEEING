@@ -1,8 +1,7 @@
 import sys
-
+import sympy as sp
 from seeing import *
 import unittest
-
 
 class TestGetSymbolByName(unittest.TestCase):
     def test_simple_expression(self):
@@ -55,7 +54,7 @@ class TestEvaluateLambda(unittest.TestCase):
         x = sp.symbols(aname1)
         y = sp.symbols(aname2)
         aexpr = x**2 + y**2
-        alambda = getRestrictedLambdaBasic(aexpr, {}, ['x', 'y'])
+        alambda = getRestrictedLambda(aexpr, {}, ['x', 'y'])
         result1 = evaluateLambda( alambda, ['x', 'y'], [2.0*np.ones(10), 3.0*np.ones(20)] )
         self.assertTrue(np.allclose(result1[2], 13.0*np.ones((20,10))))
         result2 = evaluateLambda( alambda, ['x', 'y'], [2.0*np.ones((20,10)), 3.0*np.ones((20,10))] )

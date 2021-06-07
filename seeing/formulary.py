@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
-from sympyHelpers import *
+from seeing.sympyHelpers import *
 from sympy.parsing.sympy_parser import parse_expr
 
 # in a formulary you annot have the same string as representation

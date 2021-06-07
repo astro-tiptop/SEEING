@@ -1,5 +1,5 @@
-from lambdifyDictionaries import *
-from sympyHelpers import *
+from seeing.lambdifyDictionaries import *
+from seeing.sympyHelpers import *
 
 class Integrator(object):
     # mode can be:
