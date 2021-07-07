@@ -283,6 +283,7 @@ gpulib = {
     'erfcinv': cupyx.scipy.special.erfcinv,
 #    'erf2inv': erf2inv__,
     'pow': cp.power,
+    'Pow': cp.power,
     'besselj': besselj__n,
     'bessely': bessely__n,
     'besseli': besseli__n,
