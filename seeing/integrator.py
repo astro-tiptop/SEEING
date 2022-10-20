@@ -43,7 +43,7 @@ class Integrator(object):
 
 
     def outputData(self, _data):
-        if self.xp == cp:
+        if self.xp.__name__ == 'cupy':
             if isinstance(_data, list):
                 return [ cp.asnumpy(x) for x in _data ]
             else:
@@ -62,7 +62,7 @@ class Integrator(object):
     def parametricEvaluation(self, paramsSamplings, evalFunction):
         paramsSamplingGrids = self.xp.meshgrid( *paramsSamplings, sparse=True, copy=False)
         nParams = len(paramsSamplings)
-        if self.xp == cp:
+        if self.xp.__name__ == 'cupy':
             @cp.fuse(kernel_name='evaluableFunction')
             def evaluableFunction(*paramsSamplingGrids):
                 return evalFunction(*paramsSamplingGrids)
@@ -136,7 +136,7 @@ class Integrator(object):
             return freqs_real + 1j * freqs_imag
 
         
-        if self.xp == cp:
+        if self.xp.__name__ == 'cupy':
             if method=='rect' or method=='raw':
                 @cp.fuse(kernel_name='integratedFunctionRect')
                 def integratedFunction(*integrationAndParamsVarSamplingGrids, reduce=genericSum, post_map=self.postMap):                               
