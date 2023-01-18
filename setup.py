@@ -1,6 +1,6 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(name='seeing',
       version='1.0',
-      py_modules=['seeing'],
+      packages=find_packages(),
       )
