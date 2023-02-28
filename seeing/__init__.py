@@ -14,3 +14,4 @@ except:
 from seeing.sympyHelpers import *
 from seeing.formulary import *
 from seeing.integrator import *
+from seeing._version import __version__
