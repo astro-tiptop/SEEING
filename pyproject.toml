@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=64", "wheel", "setuptools_scm[toml]>=3.4"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seeing"
+authors = [
+    {name = "Fabio Rossi", email = "fabio.rossi@inaf.it"},
+]
+description = "Sympy Expressions Evaluation Implemented oN the GPU"
+readme = "README.md"
+urls = {repository = "https://github.com/astro-tiptop/SEEING"}
+requires-python = ">=3.7"
+license = {text = "MIT License"}
+dependencies = [
+    "matplotlib",
+    "numpy",
+    "scipy",
+    "sympy",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+gpu = ["cupy"]
+
+[tool.setuptools.packages]
+find = {namespaces = false}
+
+[tool.setuptools_scm]
+write_to = "seeing/_version.py"

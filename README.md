@@ -1,9 +1,10 @@
 # SEEING
+
 Sympy Expressions Evaluation Implemented oN the GPU
 
 The idea is to provide the following to Sympy users:
 - A simple way to evaluate an expressions on the GPU
-- Backend agnostic evaluation (currently numpy and cupy are supported, in the future clpy or other numerical backends might be added) 
+- Backend agnostic evaluation (currently numpy and cupy are supported, in the future clpy or other numerical backends might be added)
 - Support tools to handle groups of expressions (evaluate, plot, subsitute parameters, share variables)
 - Numerical methods (for now integration over n-dimensional domains)
 
