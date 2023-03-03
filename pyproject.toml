@@ -3,7 +3,7 @@ requires = ["setuptools>=64", "wheel", "setuptools_scm[toml]>=3.4"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "seeing"
+name = "astro-seeing"
 authors = [
     {name = "Fabio Rossi", email = "fabio.rossi@inaf.it"},
 ]
