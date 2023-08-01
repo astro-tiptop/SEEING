@@ -11,7 +11,7 @@ if systemDisable=='FALSE':
         print("Cupy import successfull. Installed version is:", cp.__version__)
         gpuEnabled = True
     except:
-        print("Cupy import failed. TIPTOP will fall back to CPU use.")
+        print("Cupy import failed. SEEING will fall back to CPU use.")
         cp = np
 else:
     print("env variable SEEING_DISABLE_GPU prevents using the GPU.")
