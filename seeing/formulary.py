@@ -15,11 +15,12 @@ from sympy.parsing.sympy_parser import parse_expr
 
 class Formulary(object):
     # each element of the formulas list is a tuple (_lhs, _rhs, _eq)
-    def __init__(self, name='', names=[], formulas=[]):
+    def __init__(self, name='', names=[], formulas=[], symbol_map={}):
         self.name = name
         self.symbols = set({})
         self.functions = set({})
         self.formulas = dict(zip(names, formulas))
+        self.symbol_map = symbol_map
         for ff in formulas:
             if type(ff) is tuple:
                 for ffs in ff:
