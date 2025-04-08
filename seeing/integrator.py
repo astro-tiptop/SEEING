@@ -33,7 +33,7 @@ class Integrator(object):
             
     def getSampling(self, l, h, npoints, spacing='linear'):
         if spacing == 'geometric':
-            return self.xp.asarray(np.geomspace(l, h, npoints), dtype=self.evalType)
+            return self.xp.asarray(np.geomspace(l, h, int(npoints)), dtype=self.evalType)
         elif spacing == 'sqrt':
             return self.xp.asarray(h*np.sqrt(np.linspace(l/h, h/h, npoints), dtype=self.evalType))
         elif spacing == 'random':
@@ -137,13 +137,57 @@ class Integrator(object):
 
         
         if self.xp.__name__ == 'cupy':
-            if method=='rect' or method=='raw':
+            if method=='rect_scaled':
+                def integratedFunction(dx, *integrationAndParamsVarSamplingGrids, reduce=genericSum, post_map=self.postMap):
+                    result = integrandFunction(*integrationAndParamsVarSamplingGrids)
+                    # Check dimensions outside fusion
+                    if result.ndim == 2:  # 2D case
+                        dx_expanded = cp.reshape(dx, (1, -1))
+                        @cp.fuse(kernel_name='integratedFunctionRectScaled2D')
+                        def fused_calc(res, dx_exp):
+                            return res * dx_exp
+                        scaled_result = fused_calc(result, dx_expanded)
+                    elif result.ndim == 3:  # 3D case
+                        dx_expanded = cp.reshape(dx, (1, -1, 1))
+                        @cp.fuse(kernel_name='integratedFunctionRectScaled3D')
+                        def fused_calc(res, dx_exp):
+                            return res * dx_exp
+                        scaled_result = fused_calc(result, dx_expanded)
+                    else:
+                        raise ValueError(f"Unsupported dimensions: {result.shape} for integration")
+                    return post_map(reduce(scaled_result))
+            elif method=='rect' or method=='raw':
                 @cp.fuse(kernel_name='integratedFunctionRect')
-                def integratedFunction(*integrationAndParamsVarSamplingGrids, reduce=genericSum, post_map=self.postMap):                               
-                    return post_map(reduce( integrandFunction(*integrationAndParamsVarSamplingGrids))) 
+                def integratedFunction(*integrationAndParamsVarSamplingGrids, reduce=genericSum, post_map=self.postMap):                           
+                    return post_map(reduce(integrandFunction(*integrationAndParamsVarSamplingGrids)))
+            elif method=='trap_scaled':
+                def integratedFunction(dx, *integrationAndParamsVarSamplingGrids, reduce=genericSum, post_map=self.postMap):
+                    temp = integrandFunction(*integrationAndParamsVarSamplingGrids)
+                    # Check dimensions and prepare slices outside fusion
+                    if temp.ndim == 2:  # 2D case
+                        temp_left = temp[:,:-1]
+                        temp_right = temp[:,1:]
+                        dx_slice = dx[:-1]
+                        dx_expanded = cp.reshape(dx_slice, (1, -1))
+                        @cp.fuse(kernel_name='fused_trapz_2d')
+                        def fused_calc(left, right, dx_exp):
+                            return (left * dx_exp + right * dx_exp) / 2
+                        result = fused_calc(temp_left, temp_right, dx_expanded)
+                    elif temp.ndim == 3:  # 3D case
+                        temp_left = temp[:,:-1,:]
+                        temp_right = temp[:,1:,:]
+                        dx_slice = dx[:-1]
+                        dx_expanded = cp.reshape(dx_slice, (1, -1, 1))
+                        @cp.fuse(kernel_name='fused_trapz_3d')
+                        def fused_calc(left, right, dx_exp):
+                            return (left * dx_exp + right * dx_exp) / 2
+                        result = fused_calc(temp_left, temp_right, dx_expanded)
+                    else:
+                        raise ValueError(f"Unsupported dimensions: {temp.shape} for trapezoid integration")
+                    return post_map(reduce(result))
             elif method=='trap':
                 @cp.fuse(kernel_name='integratedFunctionTrap')
-                def integratedFunction(*integrationAndParamsVarSamplingGrids):                               
+                def integratedFunction(*integrationAndParamsVarSamplingGrids):                           
                     return integrandFunction(*integrationAndParamsVarSamplingGrids)
             else:
                 @cp.fuse(kernel_name='integratedFunctionMC')
@@ -155,23 +199,68 @@ class Integrator(object):
                 
         else:
             integrandFunctionV = np.vectorize(integrandFunction)
-            if method=='rect' or method=='raw':
+            if method=='rect_scaled':
+                def integratedFunction(dx, *integrationAndParamsVarSamplingGrids, post_map=self.postMap):
+                    result = integrandFunctionV(*integrationAndParamsVarSamplingGrids)
+                    # Check dimensionality of result
+                    if result.ndim == 2:  # 2D case (N,M)
+                        scaled_result = result * dx[np.newaxis, :]
+                    elif result.ndim == 3:  # 3D case (N,M,L)
+                        # Reshape dx to be compatible with 3D array for broadcasting
+                        # This creates a shape of (1,M,1) to broadcast correctly
+                        dx_reshaped = dx.reshape(1, -1, 1)
+                        scaled_result = result * dx_reshaped
+                    else:
+                        raise ValueError(f"Unsupported dimensions: {result.shape} for integration")
+                    return post_map(genericSum(scaled_result))
+            elif method=='rect' or method=='raw':
                 def integratedFunction(*integrationAndParamsVarSamplingGrids, post_map=self.postMap):
 #                   return post_map(genericSum(np.nan_to_num(integrandFunction(*integrationAndParamsVarSamplingGrids))))
                     return post_map(genericSum(integrandFunctionV(*integrationAndParamsVarSamplingGrids)))
+            elif method=='trap_scaled':
+                def integratedFunction(dx, *integrationAndParamsVarSamplingGrids, reduce=genericSum, post_map=self.postMap):
+                    temp = integrandFunction(*integrationAndParamsVarSamplingGrids)
+                    # Check dimensionality of result
+                    if temp.ndim == 2:  # 2D case (N,M)
+                        # Original logic for 2D arrays
+                        temp_left = temp[:,:-1]
+                        temp_right = temp[:,1:]
+                        dx_expanded = dx[:-1].reshape(1, -1)  # reshape to (1,M-1)
+                        result = (temp_left * dx_expanded + temp_right * dx_expanded) / 2
+                    elif temp.ndim == 3:  # 3D case (N,M,L)
+                        # Modified logic for 3D arrays
+                        temp_left = temp[:,:-1,:]
+                        temp_right = temp[:,1:,:]
+                        dx_expanded = dx[:-1].reshape(1, -1, 1)  # reshape to (1,M-1,1)
+                        result = (temp_left * dx_expanded + temp_right * dx_expanded) / 2
+                    else:
+                        raise ValueError(f"Unsupported dimensions: {temp.shape} for trapezoid integration")
+                    return post_map(reduce(result))
             else:
                 def integratedFunction(*integrationAndParamsVarSamplingGrids):
                     return integrandFunctionV(*integrationAndParamsVarSamplingGrids)
-            
-        scaleFactor = np.float64(1.0)
+
+        scaleFactor = self.xp.float64(1.0)
+        scaleFactorV = None
         for ii in range(nVars):
             if (len(integrationVarsSamplings[ii])>1):
                 if method=='trap':
-                    nn = np.float64(integrationVarsSamplings[ii].shape[0])
-                    scaleFactor *= (np.float64(integrationVarsSamplings[ii][-1]) - np.float64(integrationVarsSamplings[ii][0]))/(nn-1)
+                    nn = float(integrationVarsSamplings[ii].shape[0])
+                    scaleFactor *= (integrationVarsSamplings[ii][-1] - integrationVarsSamplings[ii][0])/(nn-1)
+                elif method=='trap_scaled' or method=='rect_scaled':
+                    if scaleFactorV is None:
+                        scaleFactorV = integrationVarsSamplings[ii][1:] - integrationVarsSamplings[ii][:-1]
+                    else:
+                        scaleFactorV *= integrationVarsSamplings[ii][1:] - integrationVarsSamplings[ii][:-1]
+                    scaleFactorV = self.xp.concatenate((scaleFactorV, self.xp.array([0])))
                 else:
-                    scaleFactor *= integrationVarsSamplings[ii][1] - integrationVarsSamplings[ii][0]              
-        if method=='trap':
+                    scaleFactor *= integrationVarsSamplings[ii][1] - integrationVarsSamplings[ii][0]
+
+        if method=='rect_scaled':
+            return integratedFunction(scaleFactorV, *integrationAndParamsVarSamplingGrids)
+        elif method=='trap_scaled':
+            return integratedFunction(scaleFactorV, *integrationAndParamsVarSamplingGrids)
+        elif method=='trap':
             return scaleFactor * genericReduction(integratedFunction(*integrationAndParamsVarSamplingGrids))
         elif method=='rect' or method=='raw':
             return scaleFactor * integratedFunction(*integrationAndParamsVarSamplingGrids)
@@ -214,12 +303,12 @@ class Integrator(object):
         parameterSamplings = []
         integrationVarsScheme = zip( integrationVariables, integrationVariablesLows, integrationVariablesHighs, integrationVarsPoints, integrationVarsSpacings)
         for integrationVariable, integrationVariableLow, integrationVariableHigh, integrationVarPoints, integrationVarSpacing in integrationVarsScheme:
-            if method=='rect':
+            if method=='rect' or method=='rect_scaled':
                 dx = (float(integrationVariableHigh)-float(integrationVariableLow))/float(integrationVarPoints-1)
                 s = self.getSampling(float(integrationVariableLow)+dx/2, float(integrationVariableHigh)-dx/2, float(integrationVarPoints-1), integrationVarSpacing)
             elif method=='raw':
                 s = self.getSampling(float(integrationVariableLow), float(integrationVariableHigh), integrationVarPoints, integrationVarSpacing)
-            elif method=='trap':
+            elif method=='trap' or method=='trap_scaled':
                 s = self.getSampling(float(integrationVariableLow), float(integrationVariableHigh), float(integrationVarPoints), integrationVarSpacing)
             elif method=='mc':
                 s = self.getSampling(float(integrationVariableLow), float(integrationVariableHigh), integrationVarPoints, 'random')
