@@ -244,21 +244,18 @@ class Integrator(object):
         scaleFactorV = None
         for ii in range(nVars):
             if (len(integrationVarsSamplings[ii])>1):
-                if method=='trap' or method=='trap_scaled':
+                if method=='trap':
                     nn = float(integrationVarsSamplings[ii].shape[0])
                     scaleFactor *= (integrationVarsSamplings[ii][-1] - integrationVarsSamplings[ii][0])/(nn-1)
+                elif method=='trap_scaled' or method=='rect_scaled':
                     if scaleFactorV is None:
                         scaleFactorV = integrationVarsSamplings[ii][1:] - integrationVarsSamplings[ii][:-1]
                     else:
                         scaleFactorV *= integrationVarsSamplings[ii][1:] - integrationVarsSamplings[ii][:-1]
+                    scaleFactorV = self.xp.concatenate((scaleFactorV, self.xp.array([0])))
                 else:
                     scaleFactor *= integrationVarsSamplings[ii][1] - integrationVarsSamplings[ii][0]
-                    if scaleFactorV is None:
-                        scaleFactorV = integrationVarsSamplings[ii][1:] - integrationVarsSamplings[ii][:-1]
-                    else:
-                        scaleFactorV *= integrationVarsSamplings[ii][1:] - integrationVarsSamplings[ii][:-1]
-        scaleFactorV = self.xp.concatenate((scaleFactorV, self.xp.array([0])))
-         
+
         if method=='rect_scaled':
             return integratedFunction(scaleFactorV, *integrationAndParamsVarSamplingGrids)
         elif method=='trap_scaled':
