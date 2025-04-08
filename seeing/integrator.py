@@ -139,12 +139,14 @@ class Integrator(object):
         if self.xp.__name__ == 'cupy':
             if method=='rect_scaled':
                 @cp.fuse(kernel_name='integratedFunctionRectScaled')
-                def integratedFunction(*integrationAndParamsVarSamplingGrids, dx, reduce=genericSum, post_map=self.postMap):                               
-                    return post_map(reduce(integrandFunction(*integrationAndParamsVarSamplingGrids) * dx[np.newaxis, :]))
+                def integratedFunction(*integrationAndParamsVarSamplingGrids, dx, reduce=genericSum, post_map=self.postMap):
+                    temp = integrandFunction(*integrationAndParamsVarSamplingGrids)
+                    temp = (temp[:,:-1] * dx[np.newaxis, :-1] + temp[:,1:] * dx[np.newaxis, :-1])/2                            
+                    return post_map(reduce(temp))
             elif method=='rect' or method=='raw':
                 @cp.fuse(kernel_name='integratedFunctionRect')
                 def integratedFunction(*integrationAndParamsVarSamplingGrids, reduce=genericSum, post_map=self.postMap):                               
-                    return post_map(reduce( integrandFunction(*integrationAndParamsVarSamplingGrids)))
+                    return post_map(reduce(integrandFunction(*integrationAndParamsVarSamplingGrids)))
             elif method=='trap_scaled':
                 @cp.fuse(kernel_name='integratedFunctionTrapScaled')
                 def integratedFunction(*integrationAndParamsVarSamplingGrids, dx):                               
@@ -171,10 +173,10 @@ class Integrator(object):
 #                   return post_map(genericSum(np.nan_to_num(integrandFunction(*integrationAndParamsVarSamplingGrids))))
                     return post_map(genericSum(integrandFunctionV(*integrationAndParamsVarSamplingGrids)))
             elif method=='trap_scaled':
-                def integratedFunction(*integrationAndParamsVarSamplingGrids, dx):
+                def integratedFunction(*integrationAndParamsVarSamplingGrids, dx, post_map=self.postMap):
                     temp = integrandFunction(*integrationAndParamsVarSamplingGrids)
                     temp = (temp[:,:-1] * dx[np.newaxis, :-1] + temp[:,1:] * dx[np.newaxis, :-1])/2
-                    return genericSum(temp)
+                    return post_map(genericSum(temp))
             else:
                 def integratedFunction(*integrationAndParamsVarSamplingGrids):
                     return integrandFunctionV(*integrationAndParamsVarSamplingGrids)
