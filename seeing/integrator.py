@@ -138,9 +138,24 @@ class Integrator(object):
         
         if self.xp.__name__ == 'cupy':
             if method=='rect_scaled':
-                @cp.fuse(kernel_name='integratedFunctionRectScaled')
                 def integratedFunction(dx, *integrationAndParamsVarSamplingGrids, reduce=genericSum, post_map=self.postMap):
-                    return post_map(reduce(integrandFunction(*integrationAndParamsVarSamplingGrids) * dx[np.newaxis, :]))
+                    result = integrandFunction(*integrationAndParamsVarSamplingGrids)
+                    # Check dimensions outside fusion
+                    if result.ndim == 2:  # 2D case
+                        dx_expanded = cp.reshape(dx, (1, -1))
+                        @cp.fuse(kernel_name='integratedFunctionRectScaled2D')
+                        def fused_calc(res, dx_exp):
+                            return res * dx_exp
+                        scaled_result = fused_calc(result, dx_expanded)
+                    elif result.ndim == 3:  # 3D case
+                        dx_expanded = cp.reshape(dx, (1, -1, 1))
+                        @cp.fuse(kernel_name='integratedFunctionRectScaled3D')
+                        def fused_calc(res, dx_exp):
+                            return res * dx_exp
+                        scaled_result = fused_calc(result, dx_expanded)
+                    else:
+                        raise ValueError(f"Unsupported dimensions: {result.shape} for integration")
+                    return post_map(reduce(scaled_result))
             elif method=='rect' or method=='raw':
                 @cp.fuse(kernel_name='integratedFunctionRect')
                 def integratedFunction(*integrationAndParamsVarSamplingGrids, reduce=genericSum, post_map=self.postMap):                           
@@ -148,16 +163,27 @@ class Integrator(object):
             elif method=='trap_scaled':
                 def integratedFunction(dx, *integrationAndParamsVarSamplingGrids, reduce=genericSum, post_map=self.postMap):
                     temp = integrandFunction(*integrationAndParamsVarSamplingGrids)
-                    # Prepare slices outside of fusion
-                    temp_left = temp[:,:-1]
-                    temp_right = temp[:,1:]
-                    dx_slice = dx[:-1]
-                    dx_expanded = cp.reshape(dx_slice, (1, -1))
-                    # Now use fusion for the calculation
-                    @cp.fuse
-                    def fused_calc(left, right, dx_exp):
-                        return (left * dx_exp + right * dx_exp) / 2
-                    result = fused_calc(temp_left, temp_right, dx_expanded)
+                    # Check dimensions and prepare slices outside fusion
+                    if temp.ndim == 2:  # 2D case
+                        temp_left = temp[:,:-1]
+                        temp_right = temp[:,1:]
+                        dx_slice = dx[:-1]
+                        dx_expanded = cp.reshape(dx_slice, (1, -1))
+                        @cp.fuse(kernel_name='fused_trapz_2d')
+                        def fused_calc(left, right, dx_exp):
+                            return (left * dx_exp + right * dx_exp) / 2
+                        result = fused_calc(temp_left, temp_right, dx_expanded)
+                    elif temp.ndim == 3:  # 3D case
+                        temp_left = temp[:,:-1,:]
+                        temp_right = temp[:,1:,:]
+                        dx_slice = dx[:-1]
+                        dx_expanded = cp.reshape(dx_slice, (1, -1, 1))
+                        @cp.fuse(kernel_name='fused_trapz_3d')
+                        def fused_calc(left, right, dx_exp):
+                            return (left * dx_exp + right * dx_exp) / 2
+                        result = fused_calc(temp_left, temp_right, dx_expanded)
+                    else:
+                        raise ValueError(f"Unsupported dimensions: {temp.shape} for trapezoid integration")
                     return post_map(reduce(result))
             elif method=='trap':
                 @cp.fuse(kernel_name='integratedFunctionTrap')
@@ -175,16 +201,41 @@ class Integrator(object):
             integrandFunctionV = np.vectorize(integrandFunction)
             if method=='rect_scaled':
                 def integratedFunction(dx, *integrationAndParamsVarSamplingGrids, post_map=self.postMap):
-                    return post_map(genericSum(integrandFunctionV(*integrationAndParamsVarSamplingGrids) * dx[np.newaxis, :]))
+                    result = integrandFunctionV(*integrationAndParamsVarSamplingGrids)
+                    # Check dimensionality of result
+                    if result.ndim == 2:  # 2D case (N,M)
+                        scaled_result = result * dx[np.newaxis, :]
+                    elif result.ndim == 3:  # 3D case (N,M,L)
+                        # Reshape dx to be compatible with 3D array for broadcasting
+                        # This creates a shape of (1,M,1) to broadcast correctly
+                        dx_reshaped = dx.reshape(1, -1, 1)
+                        scaled_result = result * dx_reshaped
+                    else:
+                        raise ValueError(f"Unsupported dimensions: {result.shape} for integration")
+                    return post_map(genericSum(scaled_result))
             elif method=='rect' or method=='raw':
                 def integratedFunction(*integrationAndParamsVarSamplingGrids, post_map=self.postMap):
 #                   return post_map(genericSum(np.nan_to_num(integrandFunction(*integrationAndParamsVarSamplingGrids))))
                     return post_map(genericSum(integrandFunctionV(*integrationAndParamsVarSamplingGrids)))
             elif method=='trap_scaled':
-                def integratedFunction(dx, *integrationAndParamsVarSamplingGrids, post_map=self.postMap):
+                def integratedFunction(dx, *integrationAndParamsVarSamplingGrids, reduce=genericSum, post_map=self.postMap):
                     temp = integrandFunction(*integrationAndParamsVarSamplingGrids)
-                    temp = (temp[:,:-1] * dx[np.newaxis, :-1] + temp[:,1:] * dx[np.newaxis, :-1])/2
-                    return post_map(genericSum(temp))
+                    # Check dimensionality of result
+                    if temp.ndim == 2:  # 2D case (N,M)
+                        # Original logic for 2D arrays
+                        temp_left = temp[:,:-1]
+                        temp_right = temp[:,1:]
+                        dx_expanded = dx[:-1].reshape(1, -1)  # reshape to (1,M-1)
+                        result = (temp_left * dx_expanded + temp_right * dx_expanded) / 2
+                    elif temp.ndim == 3:  # 3D case (N,M,L)
+                        # Modified logic for 3D arrays
+                        temp_left = temp[:,:-1,:]
+                        temp_right = temp[:,1:,:]
+                        dx_expanded = dx[:-1].reshape(1, -1, 1)  # reshape to (1,M-1,1)
+                        result = (temp_left * dx_expanded + temp_right * dx_expanded) / 2
+                    else:
+                        raise ValueError(f"Unsupported dimensions: {temp.shape} for trapezoid integration")
+                    return post_map(reduce(result))
             else:
                 def integratedFunction(*integrationAndParamsVarSamplingGrids):
                     return integrandFunctionV(*integrationAndParamsVarSamplingGrids)
