@@ -240,13 +240,13 @@ class Integrator(object):
                 def integratedFunction(*integrationAndParamsVarSamplingGrids):
                     return integrandFunctionV(*integrationAndParamsVarSamplingGrids)
 
-        scaleFactor = np.float64(1.0)
+        scaleFactor = self.xp.float64(1.0)
         scaleFactorV = None
         for ii in range(nVars):
             if (len(integrationVarsSamplings[ii])>1):
                 if method=='trap' or method=='trap_scaled':
-                    nn = np.float64(integrationVarsSamplings[ii].shape[0])
-                    scaleFactor *= (np.float64(integrationVarsSamplings[ii][-1]) - np.float64(integrationVarsSamplings[ii][0]))/(nn-1)
+                    nn = float(integrationVarsSamplings[ii].shape[0])
+                    scaleFactor *= (integrationVarsSamplings[ii][-1] - integrationVarsSamplings[ii][0])/(nn-1)
                     if scaleFactorV is None:
                         scaleFactorV = integrationVarsSamplings[ii][1:] - integrationVarsSamplings[ii][:-1]
                     else:
