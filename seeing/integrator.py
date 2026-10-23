@@ -1,5 +1,24 @@
+import functools
+
 from seeing.lambdifyDictionaries import *
 from seeing.sympyHelpers import *
+
+# Lambdified integrands, shared by all Integrator instances: sp.lambdify takes
+# milliseconds and callers evaluate the same expressions many times (e.g. the
+# MASTSEL covariance integrals, once per asterism). Lambdified functions are
+# stateless, so sharing them is safe. The modules objects come from
+# backendLibs and live as long as the process, so their id is a stable key.
+_modules_by_id = {}
+
+
+@functools.lru_cache(maxsize=256)
+def _lambdify_by_id(args, expr, modules_id):
+    return sp.lambdify(args, expr, _modules_by_id[modules_id])
+
+
+def _cached_lambdify(args, expr, modules):
+    _modules_by_id[id(modules)] = modules
+    return _lambdify_by_id(tuple(args), expr, id(modules))
 
 class Integrator(object):
     # mode can be:
@@ -84,7 +103,7 @@ class Integrator(object):
         for paramName in paramNames:
             paramVariables.append(getSymbolByName(functionToEval, paramName))
         nVar = len(paramVariables)
-        lambdaIntegrand = sp.lambdify([*paramVariables], functionToEval, self.modules)
+        lambdaIntegrand = _cached_lambdify([*paramVariables], functionToEval, self.modules)
         parameterSamplings = []
         for paramName, parameterLow, parameterHigh, parameterPoints, parameterSpacing in paramsAndRanges:
             if parameterSpacing!='provided':
@@ -297,7 +316,7 @@ class Integrator(object):
                 return
 #        weights_S = sp.symbols('weights_S', real=True)
 #        ff = weights_S * integral.function
-        lambdaIntegrand = sp.lambdify((*integrationVariables, *paramVariables), integral.function, self.modules)
+        lambdaIntegrand = _cached_lambdify((*integrationVariables, *paramVariables), integral.function, self.modules)
         integrationVariableSamplings = []
         smallIntegrationVariableSamplings = []
         parameterSamplings = []
