@@ -176,10 +176,8 @@ def evaluateFormula(
     return evaluateLambda(p_f, independentVarNames, samples)
 
 
-from sympy.parsing import latex
-
-
 def latexToSympy(latexText):
+    from sympy.parsing import latex  # deferred: ~0.14 s to import, rarely used
     return latex.parse_latex(latexText)
 
 
